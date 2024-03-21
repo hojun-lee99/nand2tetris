@@ -41,5 +41,51 @@ CHIP ALU {
         ng;      // if (out < 0)  equals 1, else 0
 
     PARTS:
-    //// Replace this comment with your code.
+    //zx
+    And16(a=x, b=false, out=ZeroX);    
+    Mux16(a=x, b=ZeroX, sel=zx, out=SelZX);
+    //nx
+    Not16(in=SelZX, out=NotX);
+    Mux16(a=SelZX, b=NotX, sel=nx, out=SelNZX);
+    //zy
+    And16(a=y, b=false, out=ZeroY);
+    Mux16(a=y, b=ZeroY, sel=zy, out=SelZY);
+    //ny
+    Not16(in=SelZY, out=NotY);
+    Mux16(a=SelZY, b=NotY, sel=ny, out=SelNZY);
+    //f
+    Add16(a=SelNZX, b=SelNZY, out=AddXY);
+    And16(a=SelNZX, b=SelNZY, out=AndXY);
+    Mux16(a=AndXY, b=AddXY, sel=f, out=FXY);
+    //no
+    Not16(in=FXY, out=NotXY);
+    //out, ng
+    Mux16(a=FXY, b=NotXY, sel=no, out[15]=ng, out[0..7]=part1, out[8..15]=part2 ,out=out);
+
+    //zr
+    /*실행오류 out=OutXY 
+    And(a=OutXY[0], b=true, out=zr0);
+    And(a=OutXY[1], b=zr0, out=zr1);
+    And(a=OutXY[2], b=zr1, out=zr2);
+    And(a=OutXY[3], b=zr2, out=zr3);
+    And(a=OutXY[4], b=zr3, out=zr4);
+    And(a=OutXY[5], b=zr4, out=zr5);
+    And(a=OutXY[6], b=zr5, out=zr6);
+    And(a=OutXY[7], b=zr6, out=zr7);
+    And(a=OutXY[8], b=zr7, out=zr8);
+    And(a=OutXY[9], b=zr8, out=zr9);
+    And(a=OutXY[10], b=zr9, out=zr10);
+    And(a=OutXY[11], b=zr10, out=zr11);
+    And(a=OutXY[12], b=zr11, out=zr12);
+    And(a=OutXY[13], b=zr12, out=zr13);
+    And(a=OutXY[14], b=zr13, out=zr14);
+    And(a=OutXY[15], b=zr14, out=zr);
+    */
+    
+    //https://github.com/zachallaun/hs-nand2tetris/blob/master/02/ALU.hdl
+    // if all of out = 0, then Or8Way(out[0..7]) or Or8Way(out[8..15]) is false ... 
+    Not(in=nonzero, out=zr); 
+    Or(a=or1, b=or2, out=nonzero); // checking if any digits are nonzero
+    Or8Way(in=part1, out=or1); // checking each 8-bit chunk for nonzero
+    Or8Way(in=part2, out=or2);
 }
