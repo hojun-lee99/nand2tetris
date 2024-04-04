@@ -14,5 +14,10 @@ CHIP PC {
     OUT out[16];
     
     PARTS:
-    //// Replace this comment with your code.
+    //https://youtu.be/RF34oaChIGY?si=MU9UEmQWjNkJyKL- 참고
+    Register(in=outMux, load=true, out=out, out=regout);
+
+    Inc16(in=regout,out=incregout);
+    
+    Mux8Way16(a=regout, b=incregout, c=in, d=in, e=false, f=false, g=false, h=false, sel[2]=reset, sel[1]=load, sel[0]=inc, out=outMux);
 }

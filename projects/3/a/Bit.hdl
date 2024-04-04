@@ -13,5 +13,8 @@ CHIP Bit {
     OUT out;
 
     PARTS:
-    //// Replace this comment with your code.
+    Mux(a=aout, b=in, sel=load, out=muxout);
+    DFF(in=muxout, out=aout);
+    // DFF의 out을 Mux a에 넣기 위해서 aout 변수 선언 bit out을 선언하기 위해 And 게이트 사용
+    And(a=aout, b=aout, out=out);
 }
